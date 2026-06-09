@@ -62,6 +62,13 @@ app.get("/health", (_req, res) => {
   res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
+app.get("/", (_req, res) => {
+  res.json({
+    success: true,
+    message: "AuraEcommerce API is running",
+  });
+});
+
 app.use("/api", routes);
 
 app.use(errorHandler);

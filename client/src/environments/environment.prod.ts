@@ -7,7 +7,7 @@
 
 export const environment = {
   production: true,
-  apiUrl: 'https://api.your-domain.com/api',
+  apiUrl: 'https://auraecommerce-exfk.onrender.com/api',
   appName: 'AuraEcommerce',
   tokenStorageKey: 'aura_access_token',
   refreshTokenStorageKey: 'aura_refresh_token',

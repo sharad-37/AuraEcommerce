@@ -454,7 +454,7 @@ This project is licensed under the MIT License.
 See:
 
 ```text
-LICENSE
+/LICENSE
 ```
 
 for complete details.
