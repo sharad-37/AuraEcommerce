@@ -1,0 +1,177 @@
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.server-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+  border-radius: var(--radius-lg);
+  border: 1px solid hsla(0, 84%, 60%, 0.2);
+  font-size: var(--text-sm);
+  font-weight: 500;
+
+  i {
+    font-size: 1.125rem;
+    flex-shrink: 0;
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+
+  .form-label {
+    margin-bottom: 0;
+  }
+}
+
+.forgot-link {
+  font-size: var(--text-xs);
+  color: var(--color-primary-600);
+  font-weight: 500;
+  transition: color var(--duration-fast);
+
+  &:hover {
+    color: var(--color-primary-800);
+  }
+}
+
+.input-wrapper {
+  position: relative;
+
+  .input-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-tertiary);
+    font-size: 1rem;
+    pointer-events: none;
+    transition: color var(--duration-fast);
+  }
+
+  .form-control.with-icon {
+    padding-left: 2.625rem;
+  }
+
+  .form-control.with-trailing {
+    padding-right: 2.625rem;
+  }
+
+  .form-control:focus + .input-icon,
+  .form-control:focus ~ .input-icon {
+    color: var(--color-primary-600);
+  }
+}
+
+.toggle-visibility {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  transition:
+    color var(--duration-fast),
+    background var(--duration-fast);
+
+  &:hover {
+    color: var(--text-primary);
+    background: var(--color-neutral-100);
+  }
+
+  i {
+    font-size: 1rem;
+    display: block;
+  }
+}
+
+.submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+
+  .spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  i {
+    transition: transform var(--duration-fast);
+  }
+
+  &:hover:not(:disabled) i {
+    transform: translateX(2px);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.divider-with-text {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: var(--text-tertiary);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: var(--space-2) 0;
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border-subtle);
+  }
+
+  span {
+    padding: 0 var(--space-3);
+  }
+}
+
+.auth-switch {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  margin: 0;
+
+  .switch-link {
+    color: var(--color-primary-600);
+    font-weight: 600;
+    margin-left: 4px;
+    transition: color var(--duration-fast);
+
+    &:hover {
+      color: var(--color-primary-800);
+      text-decoration: underline;
+    }
+  }
+}

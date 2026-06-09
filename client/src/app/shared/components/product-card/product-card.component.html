@@ -1,0 +1,56 @@
+<a
+  [routerLink]="['/products', product.id]"
+  class="product-card"
+  [attr.aria-label]="product.name"
+>
+  <div class="image-frame">
+    @if (!imageLoaded()) {
+      <div class="image-skeleton skeleton"></div>
+    }
+
+    <img
+      [src]="product.image"
+      [alt]="product.name"
+      class="product-image"
+      [class.loaded]="imageLoaded()"
+      (load)="onImageLoad()"
+      loading="lazy"
+    />
+
+    @if (isOutOfStock()) {
+      <div class="stock-overlay">
+        <span class="badge badge-danger">Out of stock</span>
+      </div>
+    } @else if (isLowStock()) {
+      <div class="stock-pill">
+        <i class="bi bi-fire"></i>
+        Only {{ product.stock }} left
+      </div>
+    }
+
+    <button
+      type="button"
+      class="quick-add"
+      [class.adding]="adding()"
+      [disabled]="adding() || isOutOfStock()"
+      (click)="onAddToCart($event)"
+      [attr.aria-label]="'Add ' + product.name + ' to cart'"
+    >
+      @if (adding()) {
+        <i class="bi bi-check-lg"></i>
+      } @else {
+        <i class="bi bi-plus-lg"></i>
+      }
+    </button>
+  </div>
+
+  <div class="card-body">
+    <div class="category-label">{{ product.category }}</div>
+    <h3 class="product-name">{{ product.name }}</h3>
+    <div class="price-row">
+      <span class="price">{{
+        product.price | currency: "USD" : "symbol" : "1.2-2"
+      }}</span>
+    </div>
+  </div>
+</a>

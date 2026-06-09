@@ -1,0 +1,76 @@
+<nav class="navbar" [class.navbar-scrolled]="scrolled()">
+  <div class="nav-container">
+    <a routerLink="/products" class="nav-brand">
+      <div class="brand-glyph">A</div>
+      <span class="brand-name">AuraEcommerce</span>
+    </a>
+
+    <ul class="nav-links">
+      <li>
+        <a routerLink="/products" routerLinkActive="active" class="nav-link">
+          Shop
+        </a>
+      </li>
+    </ul>
+
+    <div class="nav-actions">
+      <a routerLink="/cart" class="cart-button" aria-label="View cart">
+        <i class="bi bi-bag"></i>
+        @if (cartService.itemCount() > 0) {
+          <span class="cart-badge" [@badge]="cartService.itemCount()">
+            {{ cartService.itemCount() }}
+          </span>
+        }
+      </a>
+
+      @if (authService.isAuthenticated()) {
+        <div class="user-menu">
+          <button
+            type="button"
+            class="user-avatar"
+            (click)="toggleMenu()"
+            [attr.aria-expanded]="menuOpen()"
+            aria-haspopup="true"
+          >
+            {{ getUserInitials(authService.currentUser()!.email) }}
+          </button>
+
+          @if (menuOpen()) {
+            <div
+              class="user-dropdown"
+              @dropdown
+              (click)="$event.stopPropagation()"
+            >
+              <div class="dropdown-header">
+                <div class="user-email">
+                  {{ authService.currentUser()!.email }}
+                </div>
+                <div class="user-role">
+                  {{ authService.currentUser()!.role }}
+                </div>
+              </div>
+              <div class="dropdown-divider"></div>
+              <a routerLink="/cart" class="dropdown-item" (click)="closeMenu()">
+                <i class="bi bi-bag"></i>
+                <span>My Cart</span>
+              </a>
+              <button type="button" class="dropdown-item" (click)="logout()">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Sign out</span>
+              </button>
+            </div>
+          }
+        </div>
+      } @else {
+        <a routerLink="/auth/login" class="btn btn-ghost btn-sm">Sign in</a>
+        <a routerLink="/auth/register" class="btn btn-primary btn-sm"
+          >Get started</a
+        >
+      }
+    </div>
+  </div>
+
+  @if (menuOpen()) {
+    <div class="dropdown-backdrop" (click)="closeMenu()"></div>
+  }
+</nav>

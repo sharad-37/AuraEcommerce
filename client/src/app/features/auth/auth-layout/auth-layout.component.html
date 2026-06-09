@@ -1,0 +1,56 @@
+<div class="auth-shell">
+  <aside class="auth-brand-panel">
+    <div class="brand-content">
+      <a routerLink="/" class="brand-mark" @scaleIn>
+        <div class="brand-glyph">A</div>
+        <span class="brand-name">AuraEcommerce</span>
+      </a>
+
+      <div class="brand-message" @fadeInUp>
+        <h2 class="brand-headline">
+          Premium products,<br />
+          thoughtfully curated.
+        </h2>
+        <p class="brand-tagline">
+          Join thousands discovering a better way to shop. Beautiful design,
+          honest pricing, and a checkout that respects your time.
+        </p>
+      </div>
+
+      <div class="brand-features">
+        <div class="feature-item">
+          <i class="bi bi-shield-check"></i>
+          <span>Secure checkout with encrypted payments</span>
+        </div>
+        <div class="feature-item">
+          <i class="bi bi-truck"></i>
+          <span>Fast, tracked shipping on every order</span>
+        </div>
+        <div class="feature-item">
+          <i class="bi bi-arrow-counterclockwise"></i>
+          <span>30-day hassle-free returns</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand-orb orb-1"></div>
+    <div class="brand-orb orb-2"></div>
+    <div class="brand-orb orb-3"></div>
+  </aside>
+
+  <section class="auth-form-panel">
+    <div class="form-container" @fadeInUp>
+      <a routerLink="/" class="mobile-brand-mark">
+        <div class="brand-glyph">A</div>
+        <span class="brand-name">AuraEcommerce</span>
+      </a>
+
+      <header class="form-header">
+        <h1 class="form-title">{{ title }}</h1>
+        <p class="form-subtitle">{{ subtitle }}</p>
+      </header>
+
+      <ng-content></ng-content>
+    </div>
+  </section>
+</div>

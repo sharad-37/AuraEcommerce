@@ -1,0 +1,143 @@
+<app-auth-layout
+  title="Create your account"
+  subtitle="Start shopping in less than a minute"
+>
+  <form
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+    class="auth-form"
+    [@shake]="shakeState()"
+    novalidate
+  >
+    @if (serverError(); as error) {
+      <div class="server-error" @slideDown role="alert">
+        <i class="bi bi-x-circle-fill"></i>
+        <span>{{ error }}</span>
+      </div>
+    }
+
+    <div class="field">
+      <label for="email" class="form-label">Email address</label>
+      <div class="input-wrapper">
+        <i class="bi bi-envelope input-icon"></i>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          class="form-control with-icon"
+          [class.is-invalid]="
+            form.controls.email.touched && form.controls.email.invalid
+          "
+          placeholder="you@example.com"
+          autocomplete="email"
+        />
+      </div>
+      <app-form-error
+        [control]="form.controls.email"
+        [messages]="emailErrorMessages"
+      />
+    </div>
+
+    <div class="field">
+      <label for="password" class="form-label">Password</label>
+      <div class="input-wrapper">
+        <i class="bi bi-lock input-icon"></i>
+        <input
+          id="password"
+          [type]="showPassword() ? 'text' : 'password'"
+          formControlName="password"
+          class="form-control with-icon with-trailing"
+          [class.is-invalid]="
+            form.controls.password.touched && form.controls.password.invalid
+          "
+          placeholder="At least 8 characters"
+          autocomplete="new-password"
+        />
+        <button
+          type="button"
+          class="toggle-visibility"
+          (click)="togglePasswordVisibility()"
+          [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+        >
+          <i
+            class="bi"
+            [class.bi-eye]="!showPassword()"
+            [class.bi-eye-slash]="showPassword()"
+          ></i>
+        </button>
+      </div>
+
+      @if (passwordStrength().label) {
+        <div class="strength-meter" @slideDown>
+          <div class="strength-bars">
+            @for (i of [1, 2, 3, 4, 5]; track i) {
+              <div
+                class="strength-bar"
+                [class.active]="i <= passwordStrength().score"
+                [style.background]="
+                  i <= passwordStrength().score ? passwordStrength().color : ''
+                "
+              ></div>
+            }
+          </div>
+          <span class="strength-label" [style.color]="passwordStrength().color">
+            {{ passwordStrength().label }}
+          </span>
+        </div>
+      }
+
+      <app-form-error
+        [control]="form.controls.password"
+        [messages]="passwordErrorMessages"
+      />
+    </div>
+
+    <div class="field">
+      <label for="confirmPassword" class="form-label">Confirm password</label>
+      <div class="input-wrapper">
+        <i class="bi bi-lock-fill input-icon"></i>
+        <input
+          id="confirmPassword"
+          [type]="showPassword() ? 'text' : 'password'"
+          formControlName="confirmPassword"
+          class="form-control with-icon"
+          [class.is-invalid]="
+            form.controls.confirmPassword.touched &&
+            form.controls.confirmPassword.invalid
+          "
+          placeholder="Re-enter your password"
+          autocomplete="new-password"
+        />
+      </div>
+      <app-form-error
+        [control]="form.controls.confirmPassword"
+        [messages]="confirmPasswordErrorMessages"
+      />
+    </div>
+
+    <p class="terms-note">
+      By creating an account, you agree to our
+      <a href="javascript:void(0)">Terms of Service</a> and
+      <a href="javascript:void(0)">Privacy Policy</a>.
+    </p>
+
+    <button
+      type="submit"
+      class="btn btn-primary btn-lg submit-btn"
+      [disabled]="submitting()"
+    >
+      @if (submitting()) {
+        <span class="spinner"></span>
+        <span>Creating account...</span>
+      } @else {
+        <span>Create account</span>
+        <i class="bi bi-arrow-right"></i>
+      }
+    </button>
+
+    <p class="auth-switch">
+      Already have an account?
+      <a routerLink="/auth/login" class="switch-link">Sign in</a>
+    </p>
+  </form>
+</app-auth-layout>

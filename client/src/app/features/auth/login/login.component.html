@@ -1,0 +1,101 @@
+<app-auth-layout
+  title="Welcome back"
+  subtitle="Sign in to continue your shopping journey"
+>
+  <form
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+    class="auth-form"
+    [@shake]="shakeState()"
+    novalidate
+  >
+    @if (serverError(); as error) {
+      <div class="server-error" @slideDown role="alert">
+        <i class="bi bi-x-circle-fill"></i>
+        <span>{{ error }}</span>
+      </div>
+    }
+
+    <div class="field">
+      <label for="email" class="form-label">Email address</label>
+      <div class="input-wrapper">
+        <i class="bi bi-envelope input-icon"></i>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          class="form-control with-icon"
+          [class.is-invalid]="
+            form.controls.email.touched && form.controls.email.invalid
+          "
+          placeholder="you@example.com"
+          autocomplete="email"
+        />
+      </div>
+      <app-form-error
+        [control]="form.controls.email"
+        [messages]="emailErrorMessages"
+      />
+    </div>
+
+    <div class="field">
+      <div class="label-row">
+        <label for="password" class="form-label">Password</label>
+        <a class="forgot-link" href="javascript:void(0)">Forgot password?</a>
+      </div>
+      <div class="input-wrapper">
+        <i class="bi bi-lock input-icon"></i>
+        <input
+          id="password"
+          [type]="showPassword() ? 'text' : 'password'"
+          formControlName="password"
+          class="form-control with-icon with-trailing"
+          [class.is-invalid]="
+            form.controls.password.touched && form.controls.password.invalid
+          "
+          placeholder="Enter your password"
+          autocomplete="current-password"
+        />
+        <button
+          type="button"
+          class="toggle-visibility"
+          (click)="togglePasswordVisibility()"
+          [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+        >
+          <i
+            class="bi"
+            [class.bi-eye]="!showPassword()"
+            [class.bi-eye-slash]="showPassword()"
+          ></i>
+        </button>
+      </div>
+      <app-form-error
+        [control]="form.controls.password"
+        [messages]="passwordErrorMessages"
+      />
+    </div>
+
+    <button
+      type="submit"
+      class="btn btn-primary btn-lg submit-btn"
+      [disabled]="submitting()"
+    >
+      @if (submitting()) {
+        <span class="spinner"></span>
+        <span>Signing in...</span>
+      } @else {
+        <span>Sign in</span>
+        <i class="bi bi-arrow-right"></i>
+      }
+    </button>
+
+    <div class="divider-with-text">
+      <span>or</span>
+    </div>
+
+    <p class="auth-switch">
+      Don't have an account?
+      <a routerLink="/auth/register" class="switch-link">Create one</a>
+    </p>
+  </form>
+</app-auth-layout>

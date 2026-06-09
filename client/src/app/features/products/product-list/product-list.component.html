@@ -1,0 +1,206 @@
+<app-navbar />
+
+<div class="page bg-mesh">
+  <header class="page-header" @fadeInUp>
+    <div class="header-content">
+      <div class="header-text">
+        <h1 class="page-title">
+          Discover <span class="text-gradient-brand">premium</span> products
+        </h1>
+        <p class="page-subtitle">
+          Curated selections from brands we trust. Quality you can feel, design
+          you'll love.
+        </p>
+      </div>
+
+      <div class="search-box">
+        <i class="bi bi-search search-icon"></i>
+        <input
+          type="search"
+          [formControl]="searchControl"
+          placeholder="Search products..."
+          class="form-control search-input"
+          aria-label="Search products"
+        />
+        @if (searchControl.value) {
+          <button
+            type="button"
+            class="clear-search"
+            (click)="searchControl.setValue('')"
+            aria-label="Clear search"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
+        }
+      </div>
+    </div>
+  </header>
+
+  <div class="content-wrapper">
+    <aside class="filters-sidebar" @fadeInUp>
+      <div class="filter-section">
+        <h3 class="filter-title">Categories</h3>
+        <ul class="category-list">
+          <li>
+            <button
+              type="button"
+              class="category-btn"
+              [class.active]="!currentCategory()"
+              (click)="selectCategory(null)"
+            >
+              <span>All products</span>
+              <i class="bi bi-check2"></i>
+            </button>
+          </li>
+          @for (category of categories(); track category) {
+            <li>
+              <button
+                type="button"
+                class="category-btn"
+                [class.active]="currentCategory() === category"
+                (click)="selectCategory(category)"
+              >
+                <span>{{ category }}</span>
+                <i class="bi bi-check2"></i>
+              </button>
+            </li>
+          }
+        </ul>
+      </div>
+
+      @if (hasActiveFilters()) {
+        <button
+          type="button"
+          class="btn btn-outline-primary btn-sm clear-all"
+          (click)="clearFilters()"
+        >
+          <i class="bi bi-x-circle"></i>
+          Clear filters
+        </button>
+      }
+    </aside>
+
+    <main class="products-main">
+      <div class="results-bar" @fadeInUp>
+        <div class="results-count">
+          @if (loading()) {
+            <span class="muted">Loading products...</span>
+          } @else if (pagination()) {
+            <strong>{{ pagination()!.total }}</strong>
+            <span class="muted">{{
+              pagination()!.total === 1 ? "product" : "products"
+            }}</span>
+            @if (currentCategory()) {
+              <span class="muted">in</span>
+              <span class="category-chip">{{ currentCategory() }}</span>
+            }
+          }
+        </div>
+
+        <div class="sort-control">
+          <label for="sort-select" class="sort-label">Sort by:</label>
+          <select
+            id="sort-select"
+            class="form-select sort-select"
+            [value]="currentSort()"
+            (change)="changeSort($any($event.target).value)"
+          >
+            @for (option of sortOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      @if (loading()) {
+        <div class="products-grid">
+          @for (i of [1, 2, 3, 4, 5, 6, 7, 8]; track i) {
+            <div class="card-skeleton">
+              <div class="skeleton-image skeleton"></div>
+              <div
+                class="skeleton-line skeleton"
+                style="width: 40%; height: 12px; margin-bottom: 8px"
+              ></div>
+              <div
+                class="skeleton-line skeleton"
+                style="width: 85%; height: 16px; margin-bottom: 12px"
+              ></div>
+              <div
+                class="skeleton-line skeleton"
+                style="width: 30%; height: 20px"
+              ></div>
+            </div>
+          }
+        </div>
+      } @else if (products().length === 0) {
+        <div class="empty-state" @fadeInUp>
+          <div class="empty-icon">
+            <i class="bi bi-search"></i>
+          </div>
+          <h3>No products found</h3>
+          <p>Try adjusting your filters or search terms</p>
+          @if (hasActiveFilters()) {
+            <button
+              type="button"
+              class="btn btn-primary"
+              (click)="clearFilters()"
+            >
+              Clear all filters
+            </button>
+          }
+        </div>
+      } @else {
+        <div class="products-grid" [@listStagger]="products().length">
+          @for (
+            product of products();
+            track trackByProductId($index, product)
+          ) {
+            <app-product-card
+              [product]="product"
+              (addToCart)="onAddToCart($event)"
+            />
+          }
+        </div>
+
+        @if (pagination() && pagination()!.pages > 1) {
+          <nav class="pagination" aria-label="Product pagination">
+            <button
+              type="button"
+              class="page-btn"
+              [disabled]="currentPage() === 1"
+              (click)="changePage(currentPage() - 1)"
+              aria-label="Previous page"
+            >
+              <i class="bi bi-chevron-left"></i>
+            </button>
+
+            @for (page of pageNumbers(); track $index) {
+              @if (page === "ellipsis") {
+                <span class="page-ellipsis">...</span>
+              } @else {
+                <button
+                  type="button"
+                  class="page-btn"
+                  [class.active]="page === currentPage()"
+                  (click)="changePage(page)"
+                >
+                  {{ page }}
+                </button>
+              }
+            }
+
+            <button
+              type="button"
+              class="page-btn"
+              [disabled]="currentPage() === pagination()!.pages"
+              (click)="changePage(currentPage() + 1)"
+              aria-label="Next page"
+            >
+              <i class="bi bi-chevron-right"></i>
+            </button>
+          </nav>
+        }
+      }
+    </main>
+  </div>
+</div>

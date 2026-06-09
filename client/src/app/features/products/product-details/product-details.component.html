@@ -1,0 +1,190 @@
+<app-navbar />
+
+<div class="page bg-mesh">
+  <div class="container">
+    <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+      <a routerLink="/products" class="breadcrumb-link">
+        <i class="bi bi-arrow-left"></i>
+        <span>Back to shop</span>
+      </a>
+    </nav>
+
+    @if (loading()) {
+      <div class="loading-grid">
+        <div class="skeleton-image-large skeleton"></div>
+        <div class="loading-info">
+          <div
+            class="skeleton"
+            style="
+              height: 16px;
+              width: 30%;
+              margin-bottom: 16px;
+              border-radius: 8px;
+            "
+          ></div>
+          <div
+            class="skeleton"
+            style="
+              height: 36px;
+              width: 80%;
+              margin-bottom: 12px;
+              border-radius: 8px;
+            "
+          ></div>
+          <div
+            class="skeleton"
+            style="
+              height: 28px;
+              width: 25%;
+              margin-bottom: 24px;
+              border-radius: 8px;
+            "
+          ></div>
+          <div
+            class="skeleton"
+            style="height: 80px; width: 100%; border-radius: 12px"
+          ></div>
+        </div>
+      </div>
+    } @else if (notFound()) {
+      <div class="not-found" @fadeInUp>
+        <div class="empty-icon">
+          <i class="bi bi-question-circle"></i>
+        </div>
+        <h2>Product not found</h2>
+        <p>The product you're looking for doesn't exist or has been removed.</p>
+        <a routerLink="/products" class="btn btn-primary">
+          Browse all products
+        </a>
+      </div>
+    }
+
+    @if (!loading() && !notFound() && product(); as p) {
+      <div class="product-layout">
+        <section class="image-section" @scaleIn>
+          <div class="image-frame">
+            @if (!imageLoaded()) {
+              <div class="image-skeleton skeleton"></div>
+            }
+            <img
+              [src]="p.image"
+              [alt]="p.name"
+              class="product-image"
+              [class.loaded]="imageLoaded()"
+              (load)="onImageLoad()"
+            />
+          </div>
+        </section>
+
+        <section class="info-section" @fadeInUp>
+          <div class="category-label">{{ p.category }}</div>
+
+          <h1 class="product-title">{{ p.name }}</h1>
+
+          <div class="price-block">
+            <span class="price">{{
+              p.price | currency: "USD" : "symbol" : "1.2-2"
+            }}</span>
+            @if (isOutOfStock()) {
+              <span class="badge badge-danger">Out of stock</span>
+            } @else if (isLowStock()) {
+              <span class="badge badge-warning">Only {{ p.stock }} left</span>
+            } @else {
+              <span class="badge badge-success">In stock</span>
+            }
+          </div>
+
+          <div class="description">
+            <h3 class="section-title">Description</h3>
+            <p>{{ p.description }}</p>
+          </div>
+
+          @if (!isOutOfStock()) {
+            <div class="purchase-block">
+              <div class="quantity-group">
+                <label class="quantity-label">Quantity</label>
+                <div class="quantity-stepper">
+                  <button
+                    type="button"
+                    class="qty-btn"
+                    (click)="decrementQuantity()"
+                    [disabled]="!canDecrement()"
+                    aria-label="Decrease quantity"
+                  >
+                    <i class="bi bi-dash"></i>
+                  </button>
+                  <span class="qty-value">{{ quantity() }}</span>
+                  <button
+                    type="button"
+                    class="qty-btn"
+                    (click)="incrementQuantity()"
+                    [disabled]="!canIncrement()"
+                    aria-label="Increase quantity"
+                  >
+                    <i class="bi bi-plus"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="total-row">
+                <span class="total-label">Total</span>
+                <span class="total-value">{{
+                  totalPrice() | currency: "USD" : "symbol" : "1.2-2"
+                }}</span>
+              </div>
+
+              <div class="action-buttons">
+                <button
+                  type="button"
+                  class="btn btn-outline-primary btn-lg flex-1"
+                  (click)="addToCart()"
+                  [disabled]="adding()"
+                >
+                  @if (adding()) {
+                    <span class="spinner"></span>
+                  } @else {
+                    <i class="bi bi-bag-plus"></i>
+                  }
+                  <span>Add to cart</span>
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-primary btn-lg flex-1"
+                  (click)="buyNow()"
+                  [disabled]="adding()"
+                >
+                  <span>Buy now</span>
+                  <i class="bi bi-lightning-fill"></i>
+                </button>
+              </div>
+            </div>
+          }
+
+          <div class="trust-features">
+            <div class="trust-item">
+              <i class="bi bi-truck"></i>
+              <div>
+                <div class="trust-title">Free shipping</div>
+                <div class="trust-text">On orders over $50</div>
+              </div>
+            </div>
+            <div class="trust-item">
+              <i class="bi bi-shield-check"></i>
+              <div>
+                <div class="trust-title">Secure payment</div>
+                <div class="trust-text">SSL encrypted checkout</div>
+              </div>
+            </div>
+            <div class="trust-item">
+              <i class="bi bi-arrow-counterclockwise"></i>
+              <div>
+                <div class="trust-title">30-day returns</div>
+                <div class="trust-text">Hassle-free policy</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    }
+  </div>
+</div>

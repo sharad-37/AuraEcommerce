@@ -1,0 +1,210 @@
+<app-navbar />
+
+<div class="page bg-mesh">
+  <div class="container">
+    <header class="cart-header" @fadeInUp>
+      <div>
+        <h1 class="cart-title">Your cart</h1>
+        @if (cartService.itemCount() > 0) {
+          <p class="cart-subtitle">
+            {{ cartService.itemCount() }}
+            {{ cartService.itemCount() === 1 ? "item" : "items" }} ready to
+            checkout
+          </p>
+        }
+      </div>
+      <a routerLink="/products" class="btn btn-ghost btn-sm continue-shopping">
+        <i class="bi bi-arrow-left"></i>
+        Continue shopping
+      </a>
+    </header>
+
+    @if (cartService.items().length === 0) {
+      <div class="empty-cart" @scaleIn>
+        <div class="empty-illustration">
+          <div class="empty-bag">
+            <i class="bi bi-bag"></i>
+          </div>
+        </div>
+        <h2 class="empty-title">Your cart is empty</h2>
+        <p class="empty-text">
+          Looks like you haven't added anything yet. Let's find something you'll
+          love.
+        </p>
+        <a routerLink="/products" class="btn btn-primary btn-lg">
+          <i class="bi bi-search"></i>
+          Browse products
+        </a>
+      </div>
+    } @else {
+      <div class="cart-layout">
+        <section
+          class="items-section"
+          [@listStagger]="cartService.items().length"
+        >
+          @for (
+            item of cartService.items();
+            track trackByItemId($index, item)
+          ) {
+            <article
+              class="cart-item"
+              [class.removing]="isRemoving(item.id)"
+              [class.updating]="isUpdating(item.id)"
+            >
+              <a
+                [routerLink]="['/products', item.product.id]"
+                class="item-image-link"
+              >
+                <div class="item-image-frame">
+                  <img
+                    [src]="item.product.image"
+                    [alt]="item.product.name"
+                    class="item-image"
+                    loading="lazy"
+                  />
+                </div>
+              </a>
+
+              <div class="item-details">
+                <div class="item-info">
+                  <div class="item-category">{{ item.product.category }}</div>
+                  <a
+                    [routerLink]="['/products', item.product.id]"
+                    class="item-name"
+                  >
+                    {{ item.product.name }}
+                  </a>
+                  <div class="item-unit-price">
+                    {{ item.price | currency: "USD" : "symbol" : "1.2-2" }} each
+                  </div>
+                </div>
+
+                <div class="item-actions">
+                  <div class="quantity-stepper">
+                    <button
+                      type="button"
+                      class="qty-btn"
+                      [disabled]="item.quantity <= 1"
+                      (click)="decrementQuantity(item)"
+                      aria-label="Decrease quantity"
+                    >
+                      <i class="bi bi-dash"></i>
+                    </button>
+                    <span class="qty-value">{{ item.quantity }}</span>
+                    <button
+                      type="button"
+                      class="qty-btn"
+                      [disabled]="
+                        item.quantity >= item.product.stock ||
+                        item.quantity >= 99
+                      "
+                      (click)="incrementQuantity(item)"
+                      aria-label="Increase quantity"
+                    >
+                      <i class="bi bi-plus"></i>
+                    </button>
+                  </div>
+
+                  <div class="item-subtotal">
+                    {{
+                      item.price * item.quantity
+                        | currency: "USD" : "symbol" : "1.2-2"
+                    }}
+                  </div>
+
+                  <button
+                    type="button"
+                    class="remove-btn"
+                    (click)="removeItem(item)"
+                    [attr.aria-label]="
+                      'Remove ' + item.product.name + ' from cart'
+                    "
+                  >
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </div>
+              </div>
+            </article>
+          }
+        </section>
+
+        <aside class="summary-section" @fadeInUp>
+          <div class="summary-card">
+            <h3 class="summary-title">Order summary</h3>
+
+            <div class="summary-rows">
+              <div class="summary-row">
+                <span>Subtotal</span>
+                <span class="value">
+                  {{
+                    cartService.subtotal()
+                      | currency: "USD" : "symbol" : "1.2-2"
+                  }}
+                </span>
+              </div>
+
+              <div class="summary-row">
+                <span class="row-with-info">
+                  Shipping
+                  @if (shippingFee() === 0) {
+                    <span class="badge badge-success">Free</span>
+                  }
+                </span>
+                <span class="value">
+                  @if (shippingFee() > 0) {
+                    {{ shippingFee() | currency: "USD" : "symbol" : "1.2-2" }}
+                  } @else {
+                    —
+                  }
+                </span>
+              </div>
+
+              <div class="summary-row">
+                <span>Tax (estimated)</span>
+                <span class="value">{{
+                  tax() | currency: "USD" : "symbol" : "1.2-2"
+                }}</span>
+              </div>
+
+              @if (cartService.subtotal() < 50 && cartService.subtotal() > 0) {
+                <div class="shipping-hint">
+                  <i class="bi bi-truck"></i>
+                  Add
+                  <strong>
+                    {{
+                      50 - cartService.subtotal()
+                        | currency: "USD" : "symbol" : "1.2-2"
+                    }}
+                  </strong>
+                  more for free shipping
+                </div>
+              }
+            </div>
+
+            <div class="summary-total">
+              <span>Total</span>
+              <span class="total-value">
+                {{ total() | currency: "USD" : "symbol" : "1.2-2" }}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              class="btn btn-primary btn-lg checkout-btn"
+              (click)="proceedToCheckout()"
+            >
+              <i class="bi bi-lock-fill"></i>
+              <span>Secure checkout</span>
+              <i class="bi bi-arrow-right arrow-icon"></i>
+            </button>
+
+            <div class="trust-row">
+              <i class="bi bi-shield-check"></i>
+              <span>Encrypted checkout · Easy returns</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    }
+  </div>
+</div>

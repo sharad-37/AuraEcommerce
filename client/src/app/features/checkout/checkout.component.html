@@ -1,0 +1,211 @@
+<app-navbar />
+
+<div class="page bg-mesh">
+  <div class="container">
+    <header class="checkout-header" @fadeInUp>
+      <a routerLink="/cart" class="back-link">
+        <i class="bi bi-arrow-left"></i>
+        <span>Back to cart</span>
+      </a>
+      <h1 class="checkout-title">Checkout</h1>
+      <p class="checkout-subtitle">Almost there — just need a few details</p>
+    </header>
+
+    <div class="checkout-layout">
+      <section class="form-section" @fadeInUp>
+        <form
+          [formGroup]="form"
+          (ngSubmit)="onSubmit()"
+          class="checkout-form"
+          [@shake]="shakeState()"
+          novalidate
+        >
+          <div class="form-card">
+            <div class="card-header">
+              <div class="step-number">1</div>
+              <div>
+                <h2 class="card-title">Contact information</h2>
+                <p class="card-subtitle">Where can we reach you?</p>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="customerName" class="form-label">Full name</label>
+              <div class="input-wrapper">
+                <i class="bi bi-person input-icon"></i>
+                <input
+                  id="customerName"
+                  type="text"
+                  formControlName="customerName"
+                  class="form-control with-icon"
+                  [class.is-invalid]="
+                    form.controls.customerName.touched &&
+                    form.controls.customerName.invalid
+                  "
+                  placeholder="John Doe"
+                  autocomplete="name"
+                />
+              </div>
+              <app-form-error
+                [control]="form.controls.customerName"
+                [messages]="nameErrorMessages"
+              />
+            </div>
+
+            <div class="field">
+              <label for="mobile" class="form-label">Mobile number</label>
+              <div class="input-wrapper">
+                <i class="bi bi-phone input-icon"></i>
+                <input
+                  id="mobile"
+                  type="tel"
+                  formControlName="mobile"
+                  class="form-control with-icon"
+                  [class.is-invalid]="
+                    form.controls.mobile.touched && form.controls.mobile.invalid
+                  "
+                  placeholder="+1 555 000 0000"
+                  autocomplete="tel"
+                />
+              </div>
+              <app-form-error
+                [control]="form.controls.mobile"
+                [messages]="mobileErrorMessages"
+              />
+            </div>
+          </div>
+
+          <div class="form-card">
+            <div class="card-header">
+              <div class="step-number">2</div>
+              <div>
+                <h2 class="card-title">Delivery address</h2>
+                <p class="card-subtitle">Where should we send your order?</p>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="address" class="form-label">Full address</label>
+              <textarea
+                id="address"
+                formControlName="address"
+                class="form-control address-textarea"
+                [class.is-invalid]="
+                  form.controls.address.touched && form.controls.address.invalid
+                "
+                placeholder="Street address, apartment/suite, city, state, postal code"
+                rows="4"
+                autocomplete="street-address"
+              ></textarea>
+              <app-form-error
+                [control]="form.controls.address"
+                [messages]="addressErrorMessages"
+              />
+            </div>
+          </div>
+
+          @if (serverError(); as error) {
+            <div class="server-error" @slideDown role="alert">
+              <i class="bi bi-x-circle-fill"></i>
+              <span>{{ error }}</span>
+            </div>
+          }
+
+          <button
+            type="submit"
+            class="btn btn-primary btn-lg place-order-btn"
+            [disabled]="submitting()"
+          >
+            @if (submitting()) {
+              <span class="spinner"></span>
+              <span>Placing your order...</span>
+            } @else {
+              <i class="bi bi-lock-fill"></i>
+              <span
+                >Place order ·
+                {{ total() | currency: "USD" : "symbol" : "1.2-2" }}</span
+              >
+            }
+          </button>
+
+          <p class="terms-text">
+            By placing this order, you agree to our
+            <a href="javascript:void(0)">Terms of Service</a> and
+            <a href="javascript:void(0)">Privacy Policy</a>.
+          </p>
+        </form>
+      </section>
+
+      <aside class="summary-section" @fadeInUp>
+        <div class="summary-card">
+          <h3 class="summary-title">
+            <i class="bi bi-bag"></i>
+            Your order
+          </h3>
+
+          <div class="items-list">
+            @for (item of cartService.items(); track item.id) {
+              <div class="summary-item">
+                <div class="item-image">
+                  <img [src]="item.product.image" [alt]="item.product.name" />
+                  <span class="item-qty-badge">{{ item.quantity }}</span>
+                </div>
+                <div class="item-text">
+                  <div class="item-name">{{ item.product.name }}</div>
+                  <div class="item-meta">{{ item.product.category }}</div>
+                </div>
+                <div class="item-price">
+                  {{
+                    item.price * item.quantity
+                      | currency: "USD" : "symbol" : "1.2-2"
+                  }}
+                </div>
+              </div>
+            }
+          </div>
+
+          <div class="summary-divider"></div>
+
+          <div class="summary-rows">
+            <div class="summary-row">
+              <span>Subtotal</span>
+              <span class="value">
+                {{
+                  cartService.subtotal() | currency: "USD" : "symbol" : "1.2-2"
+                }}
+              </span>
+            </div>
+            <div class="summary-row">
+              <span>Shipping</span>
+              <span class="value">
+                @if (shippingFee() > 0) {
+                  {{ shippingFee() | currency: "USD" : "symbol" : "1.2-2" }}
+                } @else {
+                  <span class="badge badge-success">Free</span>
+                }
+              </span>
+            </div>
+            <div class="summary-row">
+              <span>Tax</span>
+              <span class="value">{{
+                tax() | currency: "USD" : "symbol" : "1.2-2"
+              }}</span>
+            </div>
+          </div>
+
+          <div class="summary-total">
+            <span>Total</span>
+            <span class="total-value">
+              {{ total() | currency: "USD" : "symbol" : "1.2-2" }}
+            </span>
+          </div>
+
+          <div class="trust-row">
+            <i class="bi bi-shield-check"></i>
+            <span>SSL encrypted · Secure checkout</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
