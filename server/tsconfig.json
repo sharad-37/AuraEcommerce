@@ -19,6 +19,7 @@
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
     "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
     "paths": {
       "@config/*": ["src/config/*"],
       "@models/*": ["src/models/*"],
