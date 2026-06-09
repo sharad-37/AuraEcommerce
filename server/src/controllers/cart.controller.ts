@@ -36,7 +36,7 @@ export const updateCartItem = asyncHandler(
     const { quantity } = req.body;
     const cart = await cartService.updateCartItem(
       req.user!.userId,
-      req.params.id,
+      String(req.params.id),
       quantity,
     );
 
@@ -51,7 +51,7 @@ export const removeCartItem = asyncHandler(
   async (req: AuthenticatedRequest, res: Response<ApiResponse>) => {
     const cart = await cartService.removeCartItem(
       req.user!.userId,
-      req.params.id,
+      String(req.params.id),
     );
 
     res.status(200).json({

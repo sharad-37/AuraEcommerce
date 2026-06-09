@@ -46,12 +46,10 @@ export function errorHandler(
 
   if (
     err.name === "MongoServerError" &&
-    (err as Record<string, unknown>).code === 11000
+    (err as unknown as Record<string, unknown>).code === 11000
   ) {
-    const keyPattern = (err as Record<string, unknown>).keyPattern as Record<
-      string,
-      unknown
-    >;
+    const keyPattern = (err as unknown as Record<string, unknown>)
+      .keyPattern as Record<string, unknown>;
     const duplicateField = Object.keys(keyPattern)[0];
 
     res.status(409).json({

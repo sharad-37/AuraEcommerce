@@ -34,11 +34,11 @@ function generateTokens(user: IUser): AuthTokens {
   };
 
   const accessToken = jwt.sign(payload, env.jwtSecret, {
-    expiresIn: env.jwtExpiresIn,
+    expiresIn: env.jwtExpiresIn as any,
   });
 
   const refreshToken = jwt.sign(payload, env.jwtRefreshSecret, {
-    expiresIn: env.jwtRefreshExpiresIn,
+    expiresIn: env.jwtExpiresIn as any,
   });
 
   return { accessToken, refreshToken };

@@ -12,7 +12,6 @@ import { Order, Product, Cart } from "../models";
 import { AppError } from "../utils/app-error";
 import { serialize, serializeMany } from "../utils/serializer";
 import { IOrder, IOrderItem, OrderStatus } from "../types";
-import mongoose from "mongoose";
 
 interface CreateOrderData {
   customerName: string;
@@ -72,7 +71,7 @@ export async function createOrder(
 
   await Cart.findOneAndDelete({ user: userId });
 
-  return serialize<IOrder>(order.toObject()) as IOrder;
+  return serialize<IOrder>(order.toObject() as any) as IOrder;
 }
 
 export async function getUserOrders(userId: string): Promise<IOrder[]> {

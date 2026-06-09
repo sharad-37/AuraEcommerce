@@ -15,6 +15,7 @@ import { Cart, Product } from "../models";
 import { AppError } from "../utils/app-error";
 import { serialize } from "../utils/serializer";
 import { ICart } from "../types";
+import { Types } from "mongoose";
 
 async function fetchCart(userId: string): Promise<ICart | null> {
   const cart = await Cart.findOne({ user: userId })
@@ -46,7 +47,13 @@ export async function addToCart(
   if (!cart) {
     cart = await Cart.create({
       user: userId,
-      items: [{ product: productId, quantity, price: product.price }],
+      items: [
+        {
+          product: new Types.ObjectId(productId),
+          quantity,
+          price: product.price,
+        },
+      ],
     });
   } else {
     const existingItemIndex = cart.items.findIndex(
@@ -66,7 +73,7 @@ export async function addToCart(
       cart.items[existingItemIndex].price = product.price;
     } else {
       cart.items.push({
-        product: productId,
+        product: new Types.ObjectId(productId),
         quantity,
         price: product.price,
       } as ICart["items"][0]);

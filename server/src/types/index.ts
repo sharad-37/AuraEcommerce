@@ -44,6 +44,7 @@ export interface IProduct extends Document {
 // ─── Cart Types ──────────────────────────────────────────────
 
 export interface ICartItem {
+  _id?: Types.ObjectId;
   product: Types.ObjectId | IProduct;
   quantity: number;
   price: number;

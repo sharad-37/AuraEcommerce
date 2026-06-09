@@ -23,7 +23,7 @@ export const getProducts = asyncHandler(
 
 export const getProductById = asyncHandler(
   async (req: Request, res: Response<ApiResponse>) => {
-    const product = await productService.getProductById(req.params.id);
+    const product = await productService.getProductById(String(req.params.id));
 
     res.status(200).json({
       success: true,

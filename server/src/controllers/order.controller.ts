@@ -35,7 +35,7 @@ export const getOrderById = asyncHandler(
   async (req: AuthenticatedRequest, res: Response<ApiResponse>) => {
     const order = await orderService.getOrderById(
       req.user!.userId,
-      req.params.id,
+      String(req.params.id),
     );
 
     res.status(200).json({
